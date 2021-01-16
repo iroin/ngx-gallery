@@ -9,7 +9,7 @@
       <p><code class="hljs" [textContent]="'<gallery>'"></code> a slideshow component for cycling through
         elements - images, videos or iframes - like a carousel.</p>
     </section>
-    
+
     <section>
       <section-title>Installation</section-title>
       <p>Install with NPM</p>
@@ -74,8 +74,16 @@
 
       <h3>Example</h3>
 
-      <gallery id="basic" *ngIf="media$ | async; let config" [items]="fruits$ | async" [thumbWidth]="config.thumbWidth"
-        [thumbHeight]="config.thumbHeight" [thumbPosition]="config.thumbPosition"></gallery>
+<!--      <gallery id="basic" *ngIf="media$ | async; let config" [items]="fruits$ | async" [thumbWidth]="config.thumbWidth"-->
+<!--        [thumbHeight]="config.thumbHeight" [thumbPosition]="config.thumbPosition"></gallery>-->
+
+      <gallery>
+        <ng-container *ngFor="let item of fruits$ | async" carouselItem>
+          <ng-template carouselItem>
+            <gallery-image [src]="item.data.src"></gallery-image>
+          </ng-template>
+        </ng-container>
+      </gallery>
 
 
       <hl-code [code]="code.example"></hl-code>

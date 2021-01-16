@@ -2,98 +2,75 @@ import {
   Component,
   Input,
   Output,
+  EventEmitter,
   OnInit,
+  AfterViewInit,
   OnChanges,
   OnDestroy,
   SimpleChanges,
   TemplateRef,
-  EventEmitter,
-  ChangeDetectionStrategy
+  ChangeDetectionStrategy,
+  ContentChildren,
+  QueryList
 } from '@angular/core';
-import { Subscription, SubscriptionLike } from 'rxjs';
-import { Gallery } from '../services/gallery.service';
+import { Subject } from 'rxjs';
+import { CarouselItemDirective } from '../carousel/carousel-item';
+import { CarouselItem } from '../carousel/carousel.model';
 import { GalleryRef } from '../services/gallery-ref';
-import { GalleryError, GalleryItem, GalleryState } from '../models/gallery.model';
-import {
-  IframeItem,
-  IframeItemData,
-  ImageItem,
-  ImageItemData,
-  VideoItem,
-  VideoItemData,
-  YoutubeItem,
-  YoutubeItemData
-} from './templates/items.model';
+import { GalleryState } from '../models/gallery.model';
+import { takeUntil } from 'rxjs/operators';
 
 @Component({
   selector: 'gallery',
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['../styles/gallery.scss'],
   template: `
-    <gallery-core [state]="galleryRef.state | async"
-                  [config]="galleryRef.config | async"
-                  (action)="onAction($event)"
-                  (itemClick)="onItemClick($event)"
-                  (thumbClick)="onThumbClick($event)"
-                  (error)="onError($event)"></gallery-core>
-    <ng-content></ng-content>
+    <gallery-core [state]="galleryRef?.state$ | async"
+                  [config]="getConfig()"
+                  (action)="onAction($event)"></gallery-core>
   `
 })
-export class GalleryComponent implements OnInit, OnChanges, OnDestroy {
+export class GalleryComponent implements OnInit, AfterViewInit, OnChanges, OnDestroy {
 
-  galleryRef: GalleryRef;
+  /** Carousel ref */
+  galleryRef = new GalleryRef();
+
   @Input() id: string;
-  @Input() items: GalleryItem [];
-  @Input() nav: boolean = this._gallery.config.nav;
-  @Input() dots: boolean = this._gallery.config.dots;
-  @Input() loop: boolean = this._gallery.config.loop;
-  @Input() thumb: boolean = this._gallery.config.thumb;
-  @Input() zoomOut: number = this._gallery.config.zoomOut;
-  @Input() counter: boolean = this._gallery.config.counter;
-  @Input() dotsSize: number = this._gallery.config.dotsSize;
-  @Input() autoPlay: boolean = this._gallery.config.autoPlay;
-  @Input() gestures: boolean = this._gallery.config.gestures;
-  @Input() thumbWidth: number = this._gallery.config.thumbWidth;
-  @Input() thumbHeight: number = this._gallery.config.thumbHeight;
-  @Input() disableThumb: boolean = this._gallery.config.disableThumb;
-  @Input() panSensitivity: number = this._gallery.config.panSensitivity;
-  @Input() playerInterval: number = this._gallery.config.playerInterval;
-  @Input() itemTemplate: TemplateRef<any> = this._gallery.config.itemTemplate;
-  @Input() thumbTemplate: TemplateRef<any> = this._gallery.config.thumbTemplate;
-  @Input() thumbMode: 'strict' | 'free' = this._gallery.config.thumbMode;
-  @Input() imageSize: 'cover' | 'contain' = this._gallery.config.imageSize;
-  @Input() dotsPosition: 'top' | 'bottom' = this._gallery.config.dotsPosition;
-  @Input() counterPosition: 'top' | 'bottom' = this._gallery.config.counterPosition;
-  @Input() slidingDirection: 'horizontal' | 'vertical' = this._gallery.config.slidingDirection;
-  @Input() loadingStrategy: 'preload' | 'lazy' | 'default' = this._gallery.config.loadingStrategy;
-  @Input() thumbPosition: 'top' | 'left' | 'right' | 'bottom' = this._gallery.config.thumbPosition;
+  @Input() nav: boolean;
+  @Input() dots: boolean;
+  @Input() loop: boolean;
+  @Input() thumb: boolean;
+  @Input() zoomOut: number;
+  @Input() counter: boolean;
+  @Input() dotsSize: number;
+  @Input() autoPlay: boolean;
+  @Input() gestures: boolean;
+  @Input() thumbWidth: number;
+  @Input() thumbHeight: number;
+  @Input() disableThumb: boolean;
+  @Input() panSensitivity: number;
+  @Input() playerInterval: number;
+  @Input() itemTemplate: TemplateRef<any>;
+  @Input() thumbTemplate: TemplateRef<any>;
+  @Input() thumbMode: 'strict' | 'free';
+  @Input() imageSize: 'cover' | 'contain';
+  @Input() dotsPosition: 'top' | 'bottom';
+  @Input() counterPosition: 'top' | 'bottom';
+  @Input() slidingDirection: 'horizontal' | 'vertical';
+  @Input() thumbPosition: 'top' | 'left' | 'right' | 'bottom';
 
-  // Inputs used by the lightbox
+  @Input() perPage: number = 1;
 
-  /** Destroy gallery ref on component destroy event */
-  @Input() destroyRef = true;
-
-  /** Skip initializing the config with components inputs (Lightbox mode) */
-  @Input() skipInitConfig = false;
-
-  @Output() itemClick = new EventEmitter<number>();
-  @Output() thumbClick = new EventEmitter<number>();
   @Output() playingChange = new EventEmitter<GalleryState>();
   @Output() indexChange = new EventEmitter<GalleryState>();
   @Output() itemsChange = new EventEmitter<GalleryState>();
-  @Output() error = new EventEmitter<GalleryError>();
 
-  private _itemClick$: SubscriptionLike = Subscription.EMPTY;
-  private _thumbClick$: SubscriptionLike = Subscription.EMPTY;
-  private _itemChange$: SubscriptionLike = Subscription.EMPTY;
-  private _indexChange$: SubscriptionLike = Subscription.EMPTY;
-  private _playingChange$: SubscriptionLike = Subscription.EMPTY;
-  private _playerListener$: SubscriptionLike = Subscription.EMPTY;
+  private destroyed$ = new Subject();
 
-  constructor(private _gallery: Gallery) {
-  }
+  /** Carousel items reference */
+  @ContentChildren(CarouselItemDirective) items: QueryList<CarouselItem>;
 
-  private getConfig() {
+  getConfig() {
     return {
       nav: this.nav,
       dots: this.dots,
@@ -116,7 +93,6 @@ export class GalleryComponent implements OnInit, OnChanges, OnDestroy {
       panSensitivity: this.panSensitivity,
       playerInterval: this.playerInterval,
       counterPosition: this.counterPosition,
-      loadingStrategy: this.loadingStrategy,
       slidingDirection: this.slidingDirection
     };
   }
@@ -135,100 +111,57 @@ export class GalleryComponent implements OnInit, OnChanges, OnDestroy {
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.galleryRef) {
-      this.galleryRef.setConfig(this.getConfig());
-
-      if (changes.items && changes.items.currentValue !== changes.items.previousValue) {
-        this.load(this.items);
-      }
-    }
+    this.galleryRef.configure(this.getConfig());
   }
 
   ngOnInit() {
-    // Get gallery instance by id
-    if (this.skipInitConfig) {
-      this.galleryRef = this._gallery.ref(this.id);
-    } else {
-      this.galleryRef = this._gallery.ref(this.id, this.getConfig());
-    }
-
-    // Load gallery items
-    this.load(this.items);
+    // this.galleryRef.configure(this.getConfig());
 
     // Activate player listener
-    this._playerListener$ = this.galleryRef.activatePlayer().subscribe();
+    // this.galleryRef.activatePlayer().pipe(takeUntil(this.destroyed$)).subscribe();
 
     // Subscribes to events on demand
     if (this.indexChange.observers.length) {
-      this._indexChange$ = this.galleryRef.indexChanged.subscribe((state: GalleryState) => this.indexChange.emit(state));
+      this.galleryRef.activeChanged.pipe(takeUntil(this.destroyed$)).subscribe((state: GalleryState) => this.indexChange.emit(state));
     }
     if (this.itemsChange.observers.length) {
-      this._itemChange$ = this.galleryRef.itemsChanged.subscribe((state: GalleryState) => this.itemsChange.emit(state));
+      this.galleryRef.loadChanged.pipe(takeUntil(this.destroyed$)).subscribe((state: GalleryState) => this.itemsChange.emit(state));
     }
     if (this.playingChange.observers.length) {
-      this._playingChange$ = this.galleryRef.playingChanged.subscribe((state: GalleryState) => this.playingChange.emit(state));
+      this.galleryRef.playChanged.pipe(takeUntil(this.destroyed$)).subscribe((state: GalleryState) => this.playingChange.emit(state));
     }
 
     // Start playing if auto-play is set to true
     if (this.autoPlay) {
       this.play();
     }
+
+    // this.galleryRef.state.subscribe(x => console.log('gallery state:', x));
+  }
+
+  ngAfterViewInit() {
+    this.items.notifyOnChanges();
+    this.items.changes.subscribe(() => {
+      // Load carousel items
+      this.galleryRef.load(this.items.toArray());
+    });
+
+    this.galleryRef.configure({
+      loop: this.loop,
+      perPage: this.perPage,
+      // playSpeed: this.playSpeed,
+      // playReverse: this.playReverse,
+    });
   }
 
   ngOnDestroy() {
-    this._itemClick$.unsubscribe();
-    this._thumbClick$.unsubscribe();
-    this._itemChange$.unsubscribe();
-    this._indexChange$.unsubscribe();
-    this._playingChange$.unsubscribe();
-    this._playerListener$.unsubscribe();
-    if (this.destroyRef) {
-      this.galleryRef.destroy();
-    }
-  }
-
-  onItemClick(i: number) {
-    this.itemClick.emit(i);
-    this.galleryRef.itemClick.next(i);
+    this.destroyed$.next();
+    this.destroyed$.complete();
+    this.galleryRef.destroy();
   }
 
   onThumbClick(i: number) {
     this.galleryRef.set(i);
-    this.thumbClick.emit(i);
-    this.galleryRef.thumbClick.next(i);
-  }
-
-  onError(err: GalleryError) {
-    this.error.emit(err);
-    this.galleryRef.error.next(err);
-  }
-
-  load(items: GalleryItem[]) {
-    this.galleryRef.load(items);
-  }
-
-  add(item: GalleryItem, active?: boolean) {
-    this.galleryRef.add(item, active);
-  }
-
-  addImage(data: ImageItemData, active?: boolean) {
-    this.add(new ImageItem(data), active);
-  }
-
-  addVideo(data: VideoItemData, active?: boolean) {
-    this.add(new VideoItem(data), active);
-  }
-
-  addIframe(data: IframeItemData, active?: boolean) {
-    this.add(new IframeItem(data), active);
-  }
-
-  addYoutube(data: YoutubeItemData, active?: boolean) {
-    this.add(new YoutubeItem(data), active);
-  }
-
-  remove(i: number) {
-    this.galleryRef.remove(i);
   }
 
   next() {
@@ -247,8 +180,8 @@ export class GalleryComponent implements OnInit, OnChanges, OnDestroy {
     this.galleryRef.reset();
   }
 
-  play(interval?: number) {
-    this.galleryRef.play(interval);
+  play(speed?: number) {
+    this.galleryRef.play(speed);
   }
 
   stop() {

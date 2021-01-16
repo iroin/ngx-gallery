@@ -21,7 +21,6 @@ export class LabComponent implements OnInit {
 
   imageSizes = ['cover', 'contain'];
   thumbPositions = ['top', 'left', 'right', 'bottom'];
-  loadingStrategies = ['default', 'lazy', 'preload'];
   thumbModes = ['strict', 'free'];
   slidingDirections = ['vertical', 'horizontal'];
   dotsCounterPositions = ['top', 'bottom'];
@@ -56,7 +55,6 @@ export class LabComponent implements OnInit {
       playerInterval: 3000,
       thumbMode: ThumbnailsMode.Free,
       thumbPosition: ThumbnailsPosition.Bottom,
-      loadingStrategy: LoadingStrategy.Default,
       slidingDirection: SlidingDirection.Horizontal,
     };
   }

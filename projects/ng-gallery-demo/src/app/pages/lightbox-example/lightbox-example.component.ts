@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnDestroy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Gallery, GalleryItem } from '../../../../../ng-gallery/src/public-api';
+import {  GalleryItem } from '../../../../../ng-gallery/src/public-api';
 import { Lightbox } from '../../../../../ng-gallery/lightbox/src/public_api';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -21,7 +21,7 @@ export class LightboxExampleComponent implements OnInit, OnDestroy {
   space$: Observable<GalleryItem[]>;
   images: string[] = [];
 
-  constructor(public gallery: Gallery, public lightbox: Lightbox, public _pixabay: Pixabay, private _title: Title) {
+  constructor( public lightbox: Lightbox, public _pixabay: Pixabay, private _title: Title) {
     this.code = code;
   }
 
@@ -30,10 +30,10 @@ export class LightboxExampleComponent implements OnInit, OnDestroy {
     this.space$ = this._pixabay.getHDImages('sea').pipe(
       map((items: GalleryItem[]) => {
         // Load items manually into the lightbox gallery ref
-        this.gallery.ref('lightbox', {
-          thumbPosition: 'top',
-          imageSize: 'cover'
-        }).load(items);
+        // this.gallery.ref('lightbox', {
+        //   thumbPosition: 'top',
+        //   imageSize: 'cover'
+        // }).load(items);
 
         return items;
       })
@@ -41,7 +41,7 @@ export class LightboxExampleComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.gallery.ref('lightbox').destroy();
+    // this.gallery.ref('lightbox').destroy();
   }
 
 }

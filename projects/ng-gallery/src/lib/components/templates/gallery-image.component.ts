@@ -9,8 +9,8 @@ import { BehaviorSubject } from 'rxjs';
   animations: [
     trigger('fadeIn', [
       transition(':enter', [
-        style({opacity: 0}),
-        animate('300ms ease-in', style({opacity: 1}))
+        style({ opacity: 0 }),
+        animate('300ms ease-in', style({ opacity: 1 }))
       ])
     ])
   ],
@@ -52,7 +52,12 @@ import { BehaviorSubject } from 'rxjs';
         </ng-template>
       </ng-container>
     </ng-container>
-  `
+  `,
+  styles: [`
+    :host {
+      width: 100%;
+    }
+  `]
 })
 
 export class GalleryImageComponent implements OnInit, OnDestroy {
@@ -111,12 +116,12 @@ export class GalleryImageComponent implements OnInit, OnDestroy {
     this._state.complete();
   }
 
-  onProgress({loaded, total}: { loaded: number, total: number }) {
+  onProgress({ loaded, total }: { loaded: number, total: number }) {
     this.progress = loaded * 100 / total;
   }
 
   onLoaded(blobUrl: string) {
-    this.imageUrl = this._sanitizer.bypassSecurityTrustStyle(`url("${blobUrl}")`);
+    this.imageUrl = this._sanitizer.bypassSecurityTrustStyle(`url("${ blobUrl }")`);
     this._state.next('success');
   }
 

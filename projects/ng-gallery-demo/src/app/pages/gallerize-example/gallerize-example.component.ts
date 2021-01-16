@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
-import { Gallery } from '../../../../../ng-gallery/src/public-api';
+// import { Gallery } from '../../../../../ng-gallery/src/public-api';
 import { Pixabay } from '../../service/pixabay.service';
 
 @Component({
@@ -17,17 +17,17 @@ export class GallerizeExampleComponent implements OnInit {
   readonly code: any;
   readonly images$ = this._pixabay.getHDImages('camera');
 
-  constructor(private _pixabay: Pixabay, gallery: Gallery, private _title: Title) {
+  constructor(private _pixabay: Pixabay, private _title: Title) {
     this.code = code;
-    gallery.ref('lightbox').setConfig({
-      thumbPosition: 'bottom',
-      imageSize: 'cover'
-    });
-    gallery.ref('auto-detect').setConfig({
-      dots: true,
-      thumbPosition: 'top',
-      imageSize: 'cover'
-    });
+    // gallery.ref('lightbox').setConfig({
+    //   thumbPosition: 'bottom',
+    //   imageSize: 'cover'
+    // });
+    // gallery.ref('auto-detect').setConfig({
+    //   dots: true,
+    //   thumbPosition: 'top',
+    //   imageSize: 'cover'
+    // });
   }
 
   ngOnInit() {

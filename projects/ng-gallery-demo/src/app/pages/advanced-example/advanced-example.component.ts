@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import {
-  Gallery,
   GalleryConfig,
   GalleryItemData,
   GalleryItemType,
@@ -35,7 +34,7 @@ export class AdvancedExampleComponent implements OnInit {
   readonly youtubeIcon = faYoutube;
   readonly videoIcon = faVideo;
 
-  constructor(private _gallery: Gallery, mediaObserver: MediaObserver, private _title: Title) {
+  constructor(mediaObserver: MediaObserver, private _title: Title) {
     this.media$ = mediaObserver.asObservable().pipe(
       map((res: MediaChange[]) => {
         if (res.some((x => x.mqAlias === 'sm' || x.mqAlias === 'xs'))) {
@@ -54,23 +53,23 @@ export class AdvancedExampleComponent implements OnInit {
 
   ngOnInit() {
     this._title.setTitle('Advanced | ng-gallery');
-    const galleryRef = this._gallery.ref('mixed');
+    // const galleryRef = this._gallery.ref('mixed');
 
-    this.arr.map((item: GalleryItemData) => {
-      switch (item.type) {
-        case GalleryItemType.Image:
-          galleryRef.addImage(item);
-          break;
-        case GalleryItemType.Video:
-          galleryRef.addVideo(item);
-          break;
-        case GalleryItemType.Youtube:
-          galleryRef.addYoutube(item);
-          break;
-        default:
-          galleryRef.addIframe(item);
-      }
-    });
+    // this.arr.map((item: GalleryItemData) => {
+    //   switch (item.type) {
+    //     case GalleryItemType.Image:
+    //       galleryRef.addImage(item);
+    //       break;
+    //     case GalleryItemType.Video:
+    //       galleryRef.addVideo(item);
+    //       break;
+    //     case GalleryItemType.Youtube:
+    //       galleryRef.addYoutube(item);
+    //       break;
+    //     default:
+    //       galleryRef.addIframe(item);
+    //   }
+    // });
   }
 }
 

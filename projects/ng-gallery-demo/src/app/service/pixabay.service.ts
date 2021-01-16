@@ -3,9 +3,11 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map, publishReplay, refCount } from 'rxjs/operators';
 
-import { ImageItem, GalleryItem } from 'ng-gallery';
+// import { ImageItem, GalleryItem } from 'ng-gallery';
 
 import { Hit2, PixabayHDModel } from './pixabay.model';
+import { GalleryItem } from '../../../../ng-gallery/src/lib/models/gallery.model';
+import { ImageItem } from '../../../../ng-gallery/src/lib/components/templates/items.model';
 
 @Injectable({
   providedIn: 'root'

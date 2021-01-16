@@ -1,0 +1,16 @@
+<cdk-virtual-scroll-viewport [orientation]="orientation"
+                             [itemSize]="itemSize">
+
+  <div *cdkVirtualFor="let page of state.pages"
+       class="carousel-page"
+       [style.width.px]="itemWidth"
+       [style.height.px]="itemHeight"
+       [class.carousel-page-active]="page.index === state.activePage">
+
+    <div *ngFor="let item of page.items"
+         class="carousel-item"
+         [class.carousel-item-active]="item.index === state.activePage">
+      <ng-container *ngTemplateOutlet="item.template"></ng-container>
+    </div>
+  </div>
+</cdk-virtual-scroll-viewport>

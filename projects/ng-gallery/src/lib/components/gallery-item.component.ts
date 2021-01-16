@@ -6,7 +6,7 @@ import { LoadingStrategy, GalleryItemType } from '../models/constants';
   selector: 'gallery-item',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <ng-container *ngIf="load" [ngSwitch]="type">
+    <ng-container [ngSwitch]="type">
 
       <ng-container *ngSwitchCase="Types.Image">
 
@@ -98,17 +98,6 @@ export class GalleryItemComponent {
       autoplay
     }).toString();
     return url.href;
-  }
-
-  get load() {
-    switch (this.config.loadingStrategy) {
-      case LoadingStrategy.Preload:
-        return true;
-      case LoadingStrategy.Lazy:
-        return this.currIndex === this.index;
-      default:
-        return this.currIndex === this.index || this.currIndex === this.index - 1 || this.currIndex === this.index + 1;
-    }
   }
 
 }

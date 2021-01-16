@@ -4,7 +4,7 @@ import { Overlay, OverlayRef, OverlayConfig } from '@angular/cdk/overlay';
 import { LEFT_ARROW, RIGHT_ARROW, ESCAPE } from '@angular/cdk/keycodes';
 import { Subject } from 'rxjs';
 
-import { Gallery } from 'ng-gallery';
+// import { Gallery } from 'ng-gallery';
 // Uncomment the following line in development mode
 // import { Gallery } from '../../src/public-api';
 
@@ -27,7 +27,7 @@ export class Lightbox {
   /** Stream that emits when lightbox is closed */
   closed = new Subject<string>();
 
-  constructor(@Optional() @Inject(LIGHTBOX_CONFIG) config: LightboxConfig, private _gallery: Gallery, private _overlay: Overlay) {
+  constructor(@Optional() @Inject(LIGHTBOX_CONFIG) config: LightboxConfig, private _overlay: Overlay) {
     this._config = config ? {...defaultConfig, ...config} : defaultConfig;
   }
 
@@ -58,8 +58,8 @@ export class Lightbox {
       disposeOnNavigation: true
     };
 
-    const galleryRef = this._gallery.ref(id);
-    galleryRef.set(i);
+    // const galleryRef = this._gallery.ref(id);
+    // galleryRef.set(i);
 
     this._overlayRef = this._overlay.create(overlayConfig);
 
@@ -88,20 +88,20 @@ export class Lightbox {
     }
 
     // Add keyboard shortcuts
-    if (_config.keyboardShortcuts) {
-      this._overlayRef.keydownEvents().subscribe((event: any) => {
-        switch (event.keyCode) {
-          case LEFT_ARROW:
-            galleryRef.prev();
-            break;
-          case RIGHT_ARROW:
-            galleryRef.next();
-            break;
-          case ESCAPE:
-            this.close();
-        }
-      });
-    }
+    // if (_config.keyboardShortcuts) {
+    //   this._overlayRef.keydownEvents().subscribe((event: any) => {
+    //     switch (event.keyCode) {
+    //       case LEFT_ARROW:
+    //         galleryRef.prev();
+    //         break;
+    //       case RIGHT_ARROW:
+    //         galleryRef.next();
+    //         break;
+    //       case ESCAPE:
+    //         this.close();
+    //     }
+    //   });
+    // }
   }
 
   /**

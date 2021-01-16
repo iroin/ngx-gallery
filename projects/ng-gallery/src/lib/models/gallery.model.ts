@@ -1,12 +1,17 @@
-import { GalleryAction } from './constants';
+import { CarouselItem } from '../carousel/carousel.model';
 
 export interface GalleryState {
-  action?: GalleryAction;
-  items?: GalleryItem[];
-  currIndex?: number;
-  hasNext?: boolean;
-  hasPrev?: boolean;
-  isPlaying?: boolean;
+  loop?: boolean;
+  total?: number;
+  play?: boolean;
+  perPage?: number;
+  playSpeed?: number;
+  playReverse?: boolean;
+  hasNextItem?: boolean;
+  hasPrevItem?: boolean;
+  activeItem?: number;
+  activePage?: number;
+  pages?: CarouselItem[];
 }
 
 export interface GalleryItem {

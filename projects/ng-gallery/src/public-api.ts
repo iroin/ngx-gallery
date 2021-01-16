@@ -1,4 +1,4 @@
-export * from './lib/services/gallery.service';
+// export * from './lib/services/gallery.service';
 export * from './lib/services/gallery-ref';
 export * from './lib/components/gallery.component';
 export * from './lib/components/templates/items.model';

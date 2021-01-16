@@ -1,19 +1,19 @@
 import { Component, OnInit, Input, Output, EventEmitter, ChangeDetectionStrategy } from '@angular/core';
 import { DomSanitizer, SafeHtml } from '@angular/platform-browser';
-import { GalleryState } from '../models/gallery.model';
 import { GalleryConfig } from '../models/config.model';
+import { CarouselState } from '../carousel/carousel.model';
 
 @Component({
   selector: 'gallery-nav',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <i *ngIf="config.loop || state.hasPrev"
+    <i *ngIf="config.loop || state.hasPrevPage"
        class="g-nav-prev"
        aria-label="Previous"
        (tapClick)="action.emit('prev')"
        [innerHtml]="navIcon"></i>
 
-    <i *ngIf="config.loop || state.hasNext"
+    <i *ngIf="config.loop || state.hasNextPage"
        class="g-nav-next"
        aria-label="Next"
        (tapClick)="action.emit('next')"
@@ -23,7 +23,7 @@ import { GalleryConfig } from '../models/config.model';
 export class GalleryNavComponent implements OnInit {
 
   navIcon: SafeHtml;
-  @Input() state: GalleryState;
+  @Input() state: CarouselState;
   @Input() config: GalleryConfig;
   @Output() action = new EventEmitter<string>();
 

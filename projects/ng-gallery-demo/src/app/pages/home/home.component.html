@@ -9,7 +9,6 @@
     <gallery id="basic"
              fluid
              *ngIf="media$ | async; let config"
-             [items]="camel$ | async"
              [thumbWidth]="config.thumbWidth"
              [thumbHeight]="config.thumbHeight"
              ngStyle.lg="height: 540px"

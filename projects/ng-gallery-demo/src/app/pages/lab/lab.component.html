@@ -5,7 +5,6 @@
   <div class="page-content">
     <div *ngIf="show$ | async" class="gallery-container">
       <gallery #gallery id="lab"
-               [items]="photos$ | async"
                [attr.fluid]="config.fluid"
                [nav]="config.nav"
                [loop]="config.loop"
@@ -25,7 +24,6 @@
                [panSensitivity]="config.panSensitivity"
                [playerInterval]="config.playerInterval"
                [counterPosition]="config.counterPosition"
-               [loadingStrategy]="config.loadingStrategy"
                [slidingDirection]="config.slidingDirection"
                (playingChange)="onPlayer($event)"
                (indexChange)="onIndexChange($event)"
@@ -73,15 +71,6 @@
 
           <div class="column">
 
-            <div>
-              <mat-form-field>
-                <mat-label>Loading strategy</mat-label>
-                <mat-select [(ngModel)]="config.loadingStrategy">
-                  <mat-option *ngFor="let strategy of loadingStrategies" [value]="strategy">{{strategy}}
-                  </mat-option>
-                </mat-select>
-              </mat-form-field>
-            </div>
             <div>
               <mat-form-field name="slidingDirection">
                 <mat-label>Sliding directions</mat-label>

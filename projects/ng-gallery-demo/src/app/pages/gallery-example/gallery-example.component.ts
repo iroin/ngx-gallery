@@ -1,11 +1,14 @@
 import { Component, ChangeDetectionStrategy, OnInit } from '@angular/core';
 import { Title } from '@angular/platform-browser';
 import { MediaChange, MediaObserver } from '@angular/flex-layout';
-import { GalleryItem, GalleryConfig, ThumbnailsPosition } from 'ng-gallery';
+// import { GalleryItem, GalleryConfig, ThumbnailsPosition } from 'ng-gallery';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Pixabay } from '../../service/pixabay.service';
+import { GalleryItem } from '../../../../../ng-gallery/src/lib/models/gallery.model';
+import { GalleryConfig } from '../../../../../ng-gallery/src/lib/models/config.model';
+import { ThumbnailsPosition } from '../../../../../ng-gallery/src/lib/models/constants';
 
 @Component({
   host: {
