@@ -1,15 +1,45 @@
-import { Component, Input, OnInit, ViewChild, ElementRef, ChangeDetectionStrategy, Output, EventEmitter } from '@angular/core';
+import {
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+  ElementRef,
+  ChangeDetectionStrategy,
+  Output,
+  EventEmitter,
+  OnDestroy
+}                       from "@angular/core";
+import {
+  animate,
+  style,
+  transition,
+  trigger
+}                       from "@angular/animations";
+import { Subscription } from "rxjs";
 
 @Component({
   selector: 'gallery-video',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  animations: [
+    trigger('fadeIn', [
+      transition(':enter', [
+        style({opacity: 0}),
+        animate('300ms ease-in', style({opacity: 1}))
+      ])
+    ])
+  ],
   template: `
-    <video #video [controls]="controls" [poster]="poster" (error)="error.emit($event)">
-      <source *ngFor="let src of videoSources" [src]="src?.url" [type]="src?.type"/>
+    <div *ngIf="isError"
+         class="g-image-error-message">
+      <h2>⚠</h2>
+      <p>Unable to load the video!</p>
+    </div>
+    <video *ngIf="!isError" #video [controls]="controls" [poster]="poster" (error)="error.emit($event)">
+      <source *ngFor="let src of videoSources;let last = last" [src]="src?.url" [type]="src?.type" (error)="last ? error.emit($event) : null"/>
     </video>
   `
 })
-export class GalleryVideoComponent implements OnInit {
+export class GalleryVideoComponent implements OnInit, OnDestroy {
 
   videoSources: { url: string, type?: string }[];
   controls: boolean;
@@ -41,6 +71,10 @@ export class GalleryVideoComponent implements OnInit {
 
   @ViewChild('video', { static: true }) video: ElementRef;
 
+  public isError = false;
+
+  private isErrorSub: Subscription = null;
+
   ngOnInit() {
     if (this.src instanceof Array) {
       // If video has multiple sources
@@ -49,5 +83,16 @@ export class GalleryVideoComponent implements OnInit {
       this.videoSources = [{ url: this.src }];
     }
     this.controls = typeof this.controlsEnabled === 'boolean' ? this.controlsEnabled : true;
+
+    this.isErrorSub = this.error
+                          .subscribe(error => {
+      this.isError = true;
+    });
+  }
+
+  ngOnDestroy(): void {
+    if (this.isErrorSub) {
+      this.isErrorSub.unsubscribe();
+    }
   }
 }

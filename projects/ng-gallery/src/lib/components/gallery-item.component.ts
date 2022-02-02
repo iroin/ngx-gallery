@@ -22,15 +22,19 @@ import { LoadingStrategy, GalleryItemType } from '../models/constants';
         </div>
 
       </ng-container>
-
-      <gallery-video *ngSwitchCase="Types.Video"
-                     [src]="data.src"
-                     [poster]="data.poster"
-                     [controls]="data.controls"
-                     [play]="isAutoPlay"
-                     [pause]="currIndex !== index"
-                     (error)="error.emit($event)"></gallery-video>
-
+      <ng-container *ngSwitchCase="Types.Video">
+        <gallery-video [src]="data.src"
+                       [poster]="data.poster"
+                       [controls]="data.controls"
+                       [play]="isAutoPlay"
+                       [pause]="currIndex !== index"
+                       (error)="error.emit($event)"></gallery-video>
+        <div class="g-template g-item-template">
+          <ng-container *ngTemplateOutlet="config.itemTemplate;
+          context: { index: this.index, currIndex: this.currIndex, type: this.type, data: this.data }">
+          </ng-container>
+        </div>
+      </ng-container>
       <gallery-iframe *ngSwitchCase="Types.Youtube"
                       [src]="youtubeSrc"
                       [autoplay]="isAutoPlay"
