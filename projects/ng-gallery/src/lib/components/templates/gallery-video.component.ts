@@ -49,7 +49,7 @@ export class GalleryVideoComponent implements OnInit, OnDestroy {
   @Input('controls') controlsEnabled: boolean;
 
   @Input('pause') set pauseVideo(shouldPause: boolean) {
-    if (this.video.nativeElement) {
+    if (this.video?.nativeElement) {
       const video: HTMLVideoElement = this.video.nativeElement;
       if (shouldPause && !video.paused) {
         video.pause();
@@ -58,7 +58,7 @@ export class GalleryVideoComponent implements OnInit, OnDestroy {
   }
 
   @Input('play') set playVideo(shouldPlay: boolean) {
-    if (this.video.nativeElement) {
+    if (this.video?.nativeElement) {
       const video: HTMLVideoElement = this.video.nativeElement;
       if (shouldPlay) {
         video.play();
